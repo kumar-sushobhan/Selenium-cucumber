@@ -1,0 +1,1 @@
+mvn test -Dcucumber.features="src/test/java/features/Checkout.feature" -Dbrowser=firefox

@@ -3,6 +3,7 @@ package utils;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.logging.LoggingPreferences;
 
@@ -30,16 +31,26 @@ public class TestBase {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        String url = properties.getProperty("QAUrl");
+
+        String browser_properties = properties.getProperty("browser");
+        String browser_maven = System.getProperty("browser");
+
+        // Java ternary operator
+        String browser = browser_maven != null ? browser_maven : browser_properties;
+
         if (driver == null) {
-            if(Objects.equals(properties.getProperty("browser"), "chrome")){
+            if (Objects.equals(browser, "chrome")) {
                 ChromeOptions options = new ChromeOptions();
                 LoggingPreferences logPrefs = new LoggingPreferences();
                 logPrefs.enable(LogType.BROWSER, Level.ALL);
                 options.setCapability(ChromeOptions.LOGGING_PREFS, logPrefs);
                 options.addArguments("--remote-allow-origins=*");
                 driver = new ChromeDriver(options);
+            } else if (Objects.equals(browser, "firefox")) {
+                driver = new FirefoxDriver();
             }
-            driver.get(properties.getProperty("QAUrl"));
+            driver.get(url);
             driver.manage().window().maximize();
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         }
